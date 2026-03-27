@@ -1,0 +1,877 @@
+{
+  "datasets": [
+    {
+      "name": "3870846e",
+      "displayName": "Age Distubution",
+      "queryLines": [
+        "USE CATALOG `analysis`;\n",
+        "USE SCHEMA `dev`;\n",
+        "\n",
+        "-- Age Group Distubtion --\n",
+        "SELECT \n",
+        "    CASE \n",
+        "        WHEN Age < 20 THEN '<20'\n",
+        "        WHEN Age BETWEEN 20 AND 25 THEN '20-25'\n",
+        "        WHEN Age BETWEEN 26 AND 30 THEN '26-30'\n",
+        "        ELSE '30+' \n",
+        "    END AS age_group,\n",
+        "    COUNT(*) AS count\n",
+        "FROM student\n",
+        "GROUP BY age_group;\n",
+        "\n"
+      ],
+      "catalog": "analysis",
+      "schema": "dev"
+    },
+    {
+      "name": "5f8fba8b",
+      "displayName": "Depression by Age_Group",
+      "queryLines": [
+        "USE CATALOG `analysis`;\n",
+        "USE SCHEMA `dev`;\n",
+        "\n",
+        "-- Depression rate by age groupn --\n",
+        "SELECT \n",
+        "    CASE \n",
+        "        WHEN Age < 20 THEN '<20'\n",
+        "        WHEN Age BETWEEN 20 AND 25 THEN '20-25'\n",
+        "        WHEN Age BETWEEN 26 AND 30 THEN '26-30'\n",
+        "        ELSE '30+' \n",
+        "   END AS age_group,\n",
+        "    SUM(Depression) AS depressed_students,\n",
+        "    COUNT(*) AS total,\n",
+        "    (SUM(Depression) * 100 / COUNT(*)) AS depression_rate\n",
+        "FROM student\n",
+        "GROUP BY age_group;\n",
+        "\n"
+      ]
+    },
+    {
+      "name": "a74419ef",
+      "displayName": "Depression by Gender Based",
+      "queryLines": [
+        "USE CATALOG `analysis`;\n",
+        "USE SCHEMA `dev`;\n",
+        "\n",
+        "-- Depression by Gender Based\n",
+        "\n",
+        "SELECT  \n",
+        "  Gender, \n",
+        "  sum(Depression) as Depressed_Individual,\n",
+        "  count(*) as total,\n",
+        "  (sum(Depression)*100 / count(*)) as Depression_rate\n",
+        "from student\n",
+        "group by Gender\n"
+      ]
+    },
+    {
+      "name": "8f3d1f1e",
+      "displayName": "Academic_workload",
+      "queryLines": [
+        "SELECT \r\n",
+        "    Academic_Pressure,\r\n",
+        "    SUM(Depression) AS depressed,\r\n",
+        "    COUNT(*) AS total,\r\n",
+        "    (SUM(Depression) * 100.0 / COUNT(*)) AS depression_rate\r\n",
+        "FROM student\r\n",
+        "GROUP BY Academic_Pressure\r\n",
+        "ORDER BY Academic_Pressure;\r\n"
+      ],
+      "catalog": "analysis",
+      "schema": "dev"
+    },
+    {
+      "name": "0a605bda",
+      "displayName": "Degree_workload",
+      "queryLines": [
+        "SELECT\r\n",
+        "  Academic_Pressure, Degree,\r\n",
+        "  COUNT(CGPA) AS workload,\r\n",
+        "  (sum(CGPA) * 100 / COUNT(*)) AS avg_workload\r\n",
+        "FROM\r\n",
+        "  student\r\n",
+        "GROUP BY\r\n",
+        "  Academic_Pressure, Degree\r\n",
+        "ORDER BY\r\n",
+        "  workload DESC"
+      ],
+      "catalog": "analysis",
+      "schema": "dev"
+    },
+    {
+      "name": "98f9ebeb",
+      "displayName": "academic_pressure",
+      "queryLines": [
+        "SELECT\r\n",
+        "    CASE\r\n",
+        "        WHEN Academic_Pressure < 3 THEN 'Low'\r\n",
+        "        WHEN Academic_Pressure BETWEEN 3 AND 6 THEN 'Medium'\r\n",
+        "        ELSE 'High'\r\n",
+        "    END AS academic_pressure_level,\r\n",
+        "    Financial_Stress,\r\n",
+        "    SUM(Depression) AS depressed_count,\r\n",
+        "    COUNT(*) AS total_count,\r\n",
+        "    (SUM(Depression) * 100.0 / COUNT(*)) AS depression_rate\r\n",
+        "FROM analysis.dev.student\r\n",
+        "GROUP BY academic_pressure_level, Financial_Stress\r\n",
+        "ORDER BY depression_rate DESC"
+      ],
+      "catalog": "analysis",
+      "schema": "dev"
+    },
+    {
+      "name": "64a33caa",
+      "displayName": "workstudy vs depression",
+      "queryLines": [
+        "SELECT \r\n",
+        "    Work_Study_Hours,\r\n",
+        "    SUM(Depression) AS depressed,\r\n",
+        "    COUNT(*) AS total,\r\n",
+        "    (SUM(Depression) * 100.0 / COUNT(*)) AS depression_rate\r\n",
+        "FROM student\r\n",
+        "GROUP BY Work_Study_Hours\r\n",
+        "ORDER BY Work_Study_Hours;\r\n"
+      ],
+      "catalog": "analysis",
+      "schema": "dev"
+    },
+    {
+      "name": "82cf7857",
+      "displayName": "sleep _vs_pressure",
+      "queryLines": [
+        "SELECT \r\n",
+        "  Sleep_Duration,\r\n",
+        "  Degree,\r\n",
+        "  AVG(Academic_Pressure) AS avg_academic_pressure,\r\n",
+        "  COUNT(*) AS student_count\r\n",
+        "FROM analysis.dev.student\r\n",
+        "GROUP BY Sleep_Duration, Degree\r\n",
+        "ORDER BY avg_academic_pressure DESC"
+      ],
+      "catalog": "analysis",
+      "schema": "dev"
+    },
+    {
+      "name": "29e75bc2",
+      "displayName": "suicidal",
+      "queryLines": [
+        "SELECT \r\n",
+        "    Suicidal_Thoughts AS had_suicidal_thoughts,\r\n",
+        "    SUM(\r\n",
+        "        CASE \r\n",
+        "            WHEN Suicidal_Thoughts = 'Yes' THEN 1 \r\n",
+        "            ELSE 0 \r\n",
+        "        END\r\n",
+        "    ) AS Attempted_Suicide,\r\n",
+        "    COUNT(*) AS total,\r\n",
+        "    (\r\n",
+        "        SUM(\r\n",
+        "            CASE \r\n",
+        "                WHEN Suicidal_Thoughts = 'Yes' THEN 1 \r\n",
+        "                ELSE 0 \r\n",
+        "            END\r\n",
+        "        ) * 100.0\r\n",
+        "        / count(suicidal_thoughts)\r\n",
+        "    ) AS suicidal_rate\r\n",
+        "FROM student\r\n",
+        "GROUP BY Suicidal_Thoughts"
+      ],
+      "catalog": "analysis",
+      "schema": "dev"
+    },
+    {
+      "name": "01a90004",
+      "displayName": "study_satisfaction",
+      "queryLines": [
+        "SELECT \r\n",
+        "  Degree,\r\n",
+        "  AVG(Study_Satisfaction) AS avg_study_satisfaction\r\n",
+        "FROM student\r\n",
+        "GROUP BY Degree\r\n",
+        "ORDER BY avg_study_satisfaction DESC\r\n",
+        "  "
+      ],
+      "catalog": "analysis",
+      "schema": "dev"
+    },
+    {
+      "name": "a8fd7420",
+      "displayName": "location_distrubution",
+      "queryLines": [
+        "SELECT City, COUNT(*) AS num_students\r\n",
+        "FROM student\r\n",
+        "GROUP BY City\r\n",
+        "ORDER BY num_students DESC;"
+      ],
+      "catalog": "analysis",
+      "schema": "dev"
+    },
+    {
+      "name": "23c49063",
+      "displayName": "gender count",
+      "queryLines": [
+        "SELECT COUNT(*) AS total_females\r\n",
+        "FROM student\r\n",
+        "WHERE gender = 'Female';\r\n",
+        "\r\n",
+        "\r\n",
+        "SELECT COUNT(*) AS total_males\r\n",
+        "FROM student\r\n",
+        "WHERE gender = 'Male'\r\n",
+        "\r\n",
+        "\r\n",
+        "\r\n",
+        "\r\n"
+      ],
+      "catalog": "analysis",
+      "schema": "dev"
+    },
+    {
+      "name": "ca3c571c",
+      "displayName": "cgpa_highest",
+      "queryLines": [
+        "SELECT CGPA\r\n",
+        "FROM student\r\n",
+        "ORDER BY CGPA DESC\r\n",
+        "LIMIT 1;\r\n"
+      ],
+      "catalog": "analysis",
+      "schema": "dev"
+    }
+  ],
+  "pages": [
+    {
+      "name": "b4c2ff89",
+      "displayName": "Student Mental Health & Depression Indicators Dashboard",
+      "layout": [
+        {
+          "widget": {
+            "name": "c1225255",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "a74419ef",
+                  "fields": [
+                    {
+                      "name": "avg(Depression_rate)",
+                      "expression": "AVG(`Depression_rate`)"
+                    },
+                    {
+                      "name": "Gender",
+                      "expression": "`Gender`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "avg(Depression_rate)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Gender",
+                  "scale": {
+                    "type": "categorical",
+                    "mappings": [
+                      {
+                        "value": "Female",
+                        "color": {
+                          "themeColorType": "visualizationColors",
+                          "position": 8
+                        }
+                      },
+                      {
+                        "value": "Male",
+                        "color": {
+                          "themeColorType": "visualizationColors",
+                          "position": 7
+                        }
+                      }
+                    ]
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "frame": {
+                "title": "Depression Rate by Gender",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 11,
+            "width": 3,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "e8628734",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size:24px;color:#8BCAE7\">**Student Mental Health &&#32;&#32; </span><span style=\"font-size:24px;color:#FCA4A1\">Depression Indicators Dashboard**</span></span>\n",
+                "\n",
+                "<span style=\"color: #919191;\">This dataset captures psychological, academic, lifestyle, and demographic factors influencing depression levels among students. It helps researchers understand stress patterns and mental-health risks.</span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "3d551045",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "3870846e",
+                  "fields": [
+                    {
+                      "name": "count",
+                      "expression": "`count`"
+                    },
+                    {
+                      "name": "age_group",
+                      "expression": "`age_group`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "count",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "age_group",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "x-reversed"
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "showDescription": true,
+                "title": "Age Distrubtion",
+                "showTitle": true,
+                "description": "student between the ages of 20-25 tend to have a higher side on this list while those less than 20 is the reverse"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 3,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "59035a6a",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "5f8fba8b",
+                  "fields": [
+                    {
+                      "name": "age_group",
+                      "expression": "`age_group`"
+                    },
+                    {
+                      "name": "sum(depressed_students)",
+                      "expression": "SUM(`depressed_students`)"
+                    },
+                    {
+                      "name": "sum(depression_rate)",
+                      "expression": "SUM(`depression_rate`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "histogram",
+              "encodings": {
+                "x": {
+                  "fieldName": "age_group",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(depressed_students)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "age_group",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                },
+                "extra": [
+                  {
+                    "fieldName": "sum(depressed_students)"
+                  },
+                  {
+                    "fieldName": "sum(depression_rate)"
+                  }
+                ]
+              },
+              "frame": {
+                "title": "Depression Rate by Age Group",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 2,
+            "width": 3,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "5e1d7af4",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "01a90004",
+                  "fields": [
+                    {
+                      "name": "sum(avg_study_satisfaction)",
+                      "expression": "SUM(`avg_study_satisfaction`)"
+                    },
+                    {
+                      "name": "Degree",
+                      "expression": "`Degree`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "sum(avg_study_satisfaction)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Degree",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 9,
+            "width": 3,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "c977406c",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "29e75bc2",
+                  "fields": [
+                    {
+                      "name": "total",
+                      "expression": "`total`"
+                    },
+                    {
+                      "name": "had_suicidal_thoughts",
+                      "expression": "`had_suicidal_thoughts`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "total",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "had_suicidal_thoughts",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "frame": {
+                "showTitle": false
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 16,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "d2f44421",
+            "multilineTextboxSpec": {
+              "lines": [
+                ""
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 30,
+            "width": 6,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "451905cb",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "98f9ebeb",
+                  "fields": [
+                    {
+                      "name": "total_count",
+                      "expression": "`total_count`"
+                    },
+                    {
+                      "name": "sum(depression_rate)",
+                      "expression": "SUM(`depression_rate`)"
+                    },
+                    {
+                      "name": "countdistinct(academic_pressure_level)",
+                      "expression": "COUNT(DISTINCT `academic_pressure_level`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "area",
+              "encodings": {
+                "x": {
+                  "fieldName": "total_count",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fields": [
+                    {
+                      "fieldName": "sum(depression_rate)"
+                    },
+                    {
+                      "fieldName": "countdistinct(academic_pressure_level)"
+                    }
+                  ],
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Academic_Pressure"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 16,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "517130a4",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "98f9ebeb",
+                  "fields": [
+                    {
+                      "name": "sum(total_count)",
+                      "expression": "SUM(`total_count`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(total_count)"
+                }
+              },
+              "frame": {
+                "title": "Total number of students",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "9360bfff",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "98f9ebeb",
+                  "fields": [
+                    {
+                      "name": "sum(depressed_count)",
+                      "expression": "SUM(`depressed_count`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(depressed_count)"
+                }
+              },
+              "frame": {
+                "title": "Count of Depressed Students",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 4,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "199d9f39",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "a8fd7420",
+                  "fields": [
+                    {
+                      "name": "City",
+                      "expression": "`City`"
+                    },
+                    {
+                      "name": "sum(num_students)",
+                      "expression": "SUM(`num_students`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "City",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(num_students)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Location_distribution"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 22,
+            "width": 6,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "7a55a0fd",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ca3c571c",
+                  "fields": [
+                    {
+                      "name": "CGPA",
+                      "expression": "`CGPA`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "CGPA"
+                }
+              },
+              "frame": {
+                "title": "Highest CGPA",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 2,
+            "height": 2
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS"
+    },
+    {
+      "name": "f1e85907",
+      "displayName": "Global Filters",
+      "layout": [
+        {
+          "widget": {
+            "name": "d7fc70cd",
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-single-select",
+              "encodings": {},
+              "frame": {
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "c974f476",
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-single-select",
+              "encodings": {},
+              "frame": {
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 1,
+            "height": 2
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_GLOBAL_FILTERS"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}
